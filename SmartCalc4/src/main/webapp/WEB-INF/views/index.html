@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartCalc v4.0</title>
+    <link th:href="@{/resources/static/index.css}" rel="stylesheet" />
+    <script type="text/javascript" th:src="@{/resources/static/index.js}"></script>
+</head>
+<body>
+    <nav>
+        <ul class="menu-main">
+            <li><a href="clear_history">Clear history</a></li>
+            <li><a href="about">About</a></li>
+        </ul>
+    </nav>
+    <h1>Java Web Smart Calculator</h1>
+    <br>
+    <br>
+    <div class="parent">
+    <div>
+        <form th:method="POST" th:action="@{/}" th:object="${calc}">
+            <h3 id="result" th:text="${calc.getResultView()}">Text </h3>
+            <table class="table-top">
+                <tr>
+                    <td><label for="expression">Enter expression: </label></td>
+                    <td><input type="text" th:field="${calc.expression}" id="expression" onfocus="onFocus(this)"/></td>
+                    <td><input type="submit" value="="/></td>
+                </tr>
+                <tr>
+                    <td><label for="expression">Enter x: </label></td>
+                    <td><input type="text" th:field="${calc.expressionX}" id="expressionX" onfocus="onFocus(this)"/></td>
+                    <td></td>
+                </tr>
+            </table>
+            <br>
+
+        <table>
+            <tr>
+                <td><button type="button" onclick="onButtonClick()">(</button></td>
+                <td><button type="button" onclick="onButtonClick()">)</button></td>
+                <td><button type="button" onclick="onButtonClick()">e</button></td>
+                <td><button type="button" onclick="onButtonACClick()">AC</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" onclick="onButtonClick()">7</button></td>
+                <td><button type="button" onclick="onButtonClick()">8</button></td>
+                <td><button type="button" onclick="onButtonClick()">9</button></td>
+                <td><button type="button" onclick="onButtonClick()">/</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" onclick="onButtonClick()">4</button></td>
+                <td><button type="button" onclick="onButtonClick()">5</button></td>
+                <td><button type="button" onclick="onButtonClick()">6</button></td>
+                <td><button type="button" onclick="onButtonClick()">*</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" onclick="onButtonClick()">1</button></td>
+                <td><button type="button" onclick="onButtonClick()">2</button></td>
+                <td><button type="button" onclick="onButtonClick()">3</button></td>
+                <td><button type="button" onclick="onButtonClick()">+</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" onclick="onButtonClick()">.</button></td>
+                <td><button type="button" onclick="onButtonClick()">0</button></td>
+                <td><button type="button" onclick="onButtonClick()">^</button></td>
+                <td><button type="button" onclick="onButtonClick()">-</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" onclick="onButtonFuncClick()">sin</button></td>
+                <td><button type="button" onclick="onButtonFuncClick()">cos</button></td>
+                <td><button type="button" onclick="onButtonFuncClick()">tan</button></td>
+                <td><button type="button" onclick="onButtonFuncClick()">ln</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" onclick="onButtonFuncClick()">asin</button></td>
+                <td><button type="button" onclick="onButtonFuncClick()">acos</button></td>
+                <td><button type="button" onclick="onButtonFuncClick()">atan</button></td>
+                <td><button type="button" onclick="onButtonFuncClick()">log</button></td>
+            </tr>
+        </table>
+            <br>
+            <table>
+                <tr>
+                    <td><label for="xBegin">X begin: </label></td>
+                    <td><input type="text" th:field="${calc.xBegin}" id="xBegin" onfocus="onFocus(this)"/></td>
+                    <td><label for="xEnd">X end: </label></td>
+                    <td><input type="text" th:field="${calc.xEnd}" id="xEnd" onfocus="onFocus(this)"/></td>
+                </tr>
+                <tr>
+                    <td><label for="yBegin">Y begin: </label></td>
+                    <td><input type="text" th:field="${calc.yBegin}" id="yBegin" onfocus="onFocus(this)"/></td>
+                    <td><label for="yEnd">Y end: </label></td>
+                    <td><input type="text" th:field="${calc.yEnd}" id="yEnd" onfocus="onFocus(this)"/></td>
+                </tr>
+            </table>
+        </form>
+        <br>
+    </div>
+    <div>
+
+        <table class="table-history">
+            <tr>
+                 <td>History:</td>
+            </tr>
+            <tr th:each="item: ${history}">
+                <td>
+                    <button class="btn-history" type="button" th:text="${item.getExpression() +', x = ' + item.getExpressionX()}" th:onclick="onButtonHistoryClick()"></button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    </div>
+
+    <div class="div-plot">
+        <canvas id="canvas_plot" width="500" height="500"> </canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        const ctx = document.getElementById('canvas_plot');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [[${calc.graphData}]][0],
+                datasets: [{
+                    label: [[${calc.expression}]],
+                    data: [[${calc.graphData}]][1]
+                }]
+            },
+            options: {
+                elements: {
+                    point:{
+                        radius: 0
+                    }
+                },
+                scales: {
+                    y: {
+                        min: [[${calc.yBegin}]],
+                        max: [[${calc.yEnd}]]
+                    }
+                }
+            }
+        });
+    </script>>
+</body>
+</html>
